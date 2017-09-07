@@ -4,17 +4,12 @@ export PATH
 #=================================================================#
 #   System Required:  CentOS, Debian, Ubuntu                      #
 #   Description: One click Install Shadowsocks-go server          #
-#   Author: Teddysun <i@teddysun.com>                             #
-#   Thanks: @cyfdecyf <https://twitter.com/cyfdecyf>              #
-#   Intro:  https://teddysun.com/392.html                         #
 #==================================================================
 
 clear
 echo
 echo "#############################################################"
 echo "# One click Install Shadowsocks-go server                   #"
-echo "# Intro: https://teddysun.com/392.html                      #"
-echo "# Author: Teddysun <i@teddysun.com>                         #"
 echo "# Github: https://github.com/shadowsocks/shadowsocks-go     #"
 echo "#############################################################"
 echo
@@ -114,15 +109,6 @@ centosversion(){
     fi
 }
 
-# is 64bit or not
-is_64bit(){
-    if [ `getconf WORD_BIT` = '32' ] && [ `getconf LONG_BIT` = '64' ] ; then
-        return 0
-    else
-        return 1
-    fi
-}
-
 # Disable selinux
 disable_selinux(){
     if [ -s /etc/selinux/config ] && grep 'SELINUX=enforcing' /etc/selinux/config; then
@@ -156,8 +142,8 @@ pre_install(){
     fi
     # Set shadowsocks-go config password
     echo "Please input password for shadowsocks-go:"
-    read -p "(Default password: teddysun.com):" shadowsockspwd
-    [ -z "${shadowsockspwd}" ] && shadowsockspwd="teddysun.com"
+    read -p "(Default password: github.com):" shadowsockspwd
+    [ -z "${shadowsockspwd}" ] && shadowsockspwd="github.com"
     echo
     echo "---------------------------"
     echo "password = ${shadowsockspwd}"
@@ -231,38 +217,25 @@ pre_install(){
 # Download shadowsocks-go
 download_files(){
     cd ${cur_dir}
-    if is_64bit; then
-        if ! wget -c http://dl.teddysun.com/shadowsocks/shadowsocks-server-linux64-1.2.1.gz; then
-            echo -e "[${red}Error${plain}] Failed to download shadowsocks-server-linux64-1.2.1.gz"
-            exit 1
-        fi
-        gzip -d shadowsocks-server-linux64-1.2.1.gz
-        if [ $? -ne 0 ]; then
-            echo -e "[${red}Error${plain}] Decompress shadowsocks-server-linux64-1.2.1.gz failed"
-            exit 1
-        fi
-        mv -f shadowsocks-server-linux64-1.2.1 /usr/bin/shadowsocks-server
-    else
-        if ! wget -c http://dl.teddysun.com/shadowsocks/shadowsocks-server-linux32-1.2.1.gz; then
-            echo -e "[${red}Error${plain}] Failed to download shadowsocks-server-linux32-1.2.1.gz"
-            exit 1
-        fi
-        gzip -d shadowsocks-server-linux32-1.2.1.gz
-        if [ $? -ne 0 ]; then
-            echo -e "[${red}Error${plain}] Decompress shadowsocks-server-linux32-1.2.1.gz failed"
-            exit 1
-        fi
-        mv -f shadowsocks-server-linux32-1.2.1 /usr/bin/shadowsocks-server
+    if ! wget --no-check-certificate https://github.com/shadowsocks/shadowsocks-go/releases/download/1.2.1/shadowsocks-server.tar.gz; then
+        echo -e "[${red}Error${plain}] Failed to download shadowsocks-server.tar.gz"
+        exit 1
     fi
+    tar -zxvf shadowsocks-server.tar.gz
+    if [ $? -ne 0 ]; then
+        echo -e "[${red}Error${plain}] Decompress shadowsocks-server.tar.gz failed"
+        exit 1
+    fi
+    mv -f shadowsocks-server /usr/bin/shadowsocks-server
 
     # Download start script
     if check_sys packageManager yum; then
-        if ! wget --no-check-certificate -O /etc/init.d/shadowsocks https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks-go; then
+        if ! wget --no-check-certificate -O /etc/init.d/shadowsocks https://raw.githubusercontent.com/hanxi/shadowsocks_install/master/shadowsocks-go; then
             echo -e "[${red}Error${plain}] Failed to download shadowsocks-go auto start script!"
             exit 1
         fi
     elif check_sys packageManager apt; then
-        if ! wget --no-check-certificate -O /etc/init.d/shadowsocks https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks-go-debian; then
+        if ! wget --no-check-certificate -O /etc/init.d/shadowsocks https://raw.githubusercontent.com/hanxi/shadowsocks_install/master/shadowsocks-go-debian; then
             echo -e "[${red}Error${plain}] Failed to download shadowsocks-go auto start script!"
             exit 1
         fi
@@ -350,7 +323,6 @@ install(){
     echo -e "Your Password         : \033[41;37m ${shadowsockspwd} \033[0m"
     echo -e "Your Encryption Method: \033[41;37m ${shadowsockscipher} \033[0m"
     echo
-    echo "Welcome to visit:https://teddysun.com/392.html"
     echo "Enjoy it!"
     echo
 }
