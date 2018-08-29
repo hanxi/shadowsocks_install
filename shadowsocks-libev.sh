@@ -319,7 +319,7 @@ pre_install(){
     [ ! -f /etc/yum.repos.d/epel.repo ] && echo -e "${red}Error${plain} Install EPEL repository failed, please check it." && exit 1
     yum-config-manager --enable epel
     echo -e "[${green}Info${plain}] Adding the EPEL repository complete..."
-    yum install -y unzip openssl openssl-devel gettext gcc autoconf libtool automake make asciidoc xmlto udns-devel libev-devel pcre pcre-devel git
+    yum install -y unzip openssl openssl-devel gettext gcc autoconf libtool automake make asciidoc xmlto udns-devel libev-devel pcre pcre-devel c-ares-devel git
 }
 
 download() {
